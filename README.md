@@ -1,1 +1,1 @@
-# technopark-mail.ru-web-technologies-2021
+# Домашние задания по курсу Web-технологии (Технопарк mail.ru)
