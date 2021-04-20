@@ -1,0 +1,34 @@
+<div class="d-flex flex-column align-items-left ms-5 ps-5" style="width: 400px;">
+    <div class="d-flex caption mt-5 pt-4">
+        Popular Tags
+    </div>
+    <div class="d-flex flex-row align-items-center flex-wrap">
+        {% for tag in popularTags %}
+        <a href = {% url 'tag_questions' name=tag.name %}>
+            <div class="d-flex btn btn-secondary btn-sm tag">
+                {{ tag.name }}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+<div class="d-flex flex-column align-items-left ms-5 ps-5">
+    <div class="d-flex caption mt-3 mb-2">
+        Best Members
+    </div>
+    <div class="mb-2">
+        <a href="#" class="text-decoration-none member">@Ilyagu</a>
+    </div>
+    <div class="mb-2">
+        <a href="#" class="text-decoration-none member">@Miyagu</a>
+    </div>
+    <div class="mb-2">
+        <a href="#" class="text-decoration-none member">@CoOol</a>
+    </div>
+    <div class="mb-2">
+        <a href="#" class="text-decoration-none member">@Mock</a>
+    </div>
+    <div class="mb-2">
+        <a href="#" class="text-decoration-none member">@GoogleTestFan</a>
+    </div>
+</div>

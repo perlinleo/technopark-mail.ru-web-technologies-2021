@@ -1,0 +1,50 @@
+{% load static %}
+
+<header class="border-bottom pt-1">
+    <div class="container ">
+        <div class="d-flex flex-wrap align-items-center justify-content-between">
+            <a href="{% url 'index' %}" class="col-3">
+                <img src="{% static "img/logo.png" %}" width="194" height="88">
+            </a>
+
+
+            <form class="col-2 w-25">
+                <input type="search" class="form-control" placeholder="Search...">
+            </form>
+            <button class="btn btn-dark mx-5" style=" background-color:blueviolet; width: 300px;" type="submit">
+                ASK!
+            </button>
+
+            <!-- Если авторизован -->
+            <a href="#" class="d-block link-dark text-decoration-none" id="dropdownUser1" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                    <img src="{% static "img/my_avatar.jpg" %}" alt="mdo" width="40" height="40"
+                        class="me-lg-3 rounded-circle">
+                    <div class="font-weight-bold dropdown-toggle" style="width: 150px;">
+                        Leonid Perlin
+                    </div>
+                </div>
+
+            </a>
+            <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+                <li><a class="dropdown-item" href="{% url 'settings' %}">Settings</a></li>
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="#">Sign out</a></li>
+            </ul>
+
+            <!-- если не авторизован -->
+            {#<a href="{% url 'login' %}" <button class="btn btn-dark " style=" background-color:blueviolet;" type="submit"> #}
+            {#    Log in                                                                            #}
+            {#</button>                                                                             #}
+            {#<a href="{% url 'signup' %}">                                                          #}
+            {#    <button class="btn btn-dark " style=" background-color:blueviolet;" type="submit">#}
+            {#    Sign in                                                                             #}
+            {#</button></a>                                                                           #}
+            
+        </div>
+    </div>
+    </div>
+</header>

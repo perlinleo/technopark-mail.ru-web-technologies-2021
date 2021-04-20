@@ -1,0 +1,101 @@
+{% load static %}
+
+<nav class="container-fluid">
+    <div class="d-flex ms-4 my-4">
+        <ul class="pagination">
+            {% if questions %}
+                <li class="page-item">
+                    {% if questions.has_previous %}
+                        <a class="page-link" href="?page={{ questions.previous_page_number }}">previous</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item">
+                    {% if questions.has_previous %}
+                        <a class="page-link" href="?page={{ questions.previous_page_number }}">{{ questions.previous_page_number }}</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item active">
+                    <a class="page-link" href="?page={{ questions.number }}">{{ questions.number }}</a>
+                </li>
+
+                <li class="page-item">
+                    {% if questions.has_next %}
+                        <a class="page-link" href="?page={{ questions.next_page_number }}">{{ questions.next_page_number }}</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item disabled">
+                    {% if questions.next_page_number < questions.paginator.num_pages %}
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item">
+                    {% if questions.next_page_number < questions.paginator.num_pages %}
+                        <a class="page-link" href="?page={{ questions.paginator.num_pages }}">{{ questions.paginator.num_pages }}</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item">
+                    {% if questions.has_next %}
+                        <a class="page-link" href="?page={{ questions.next_page_number }}">next</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item">
+                    {% if questions.number == questions.paginator.num_pages %}
+                        <a class="page-link" href="?page=1">first</a>
+                    {% endif %}
+                </li>
+            {% elif answers %}
+                <li class="page-item">
+                    {% if answerss.has_previous %}
+                        <a class="page-link" href="?page={{ answers.previous_page_number }}">previous</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item">
+                    {% if answers.has_previous %}
+                        <a class="page-link" href="?page={{ answers.previous_page_number }}">{{ answers.previous_page_number }}</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item active">
+                    <a class="page-link" href="?page={{ answers.number }}">{{ answers.number }}</a>
+                </li>
+
+                <li class="page-item">
+                    {% if asnwers.has_next %}
+                        <a class="page-link" href="?page={{ answers.next_page_number }}">{{ answer.next_page_number }}</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item disabled">
+                    {% if answers.next_page_number < answers.paginator.num_pages %}
+                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">...</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item">
+                    {% if answers.next_page_number < answers.paginator.num_pages %}
+                        <a class="page-link" href="?page={{ questions.paginator.num_pages }}">{{ questions.paginator.num_pages }}</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item">
+                    {% if answes.has_next %}
+                        <a class="page-link" href="?page={{ answers.next_page_number }}">next</a>
+                    {% endif %}
+                </li>
+
+                <li class="page-item">
+                    {% if answers.number == answers.paginator.num_pages %}
+                        <a class="page-link" href="?page=1">first</a>
+                    {% endif %}
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

@@ -1,0 +1,51 @@
+{% load static %}
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>ask</title>
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../static/css/style.css" rel="stylesheet">
+</head>
+
+<body class="pt-2">
+
+    {% include "include/header.html" %}
+    
+    <main class="flex-shrink-0">
+        <div class="container-fluid">
+            <div class="row d-flex align-items-left justify-content-center">
+                <div class="col-3">
+
+
+                </div>
+                <div class="col-5 mt-5">
+
+                    {% block headline %}
+
+                    {% endblock headline %}
+
+                    {% block content %}
+
+                    {% endblock content %}
+
+                </div>
+                <div class="col-4">
+
+                    {% include "include/side.html" %}
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include "include/footer.html" %}
+
+    <script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
+
+</body>
+
+</html>
