@@ -7,6 +7,7 @@
     {% for answer in answers %}
         {% include "include/answer.html" %}
     {% endfor %}
+    {% include "include/paginator_question.html" %}
     {% include "include/answer_form.html" %}
-    {% include "include/paginator.html" %}
+    
 {% endblock content %}

@@ -49,7 +49,7 @@ class Answer(models.Model):
         super(Answer, self).delete(*args, **kwargs)   
          
     def __str__(self):
-        return self.author.user.get_username()
+        return f"{self.author.user.get_username()} answers on {self.question.__str__()}"
         
     class Meta:
         verbose_name = 'Answer'
@@ -61,7 +61,7 @@ class LikeQuestion(models.Model):
     opinion = models.BooleanField(default=True, verbose_name = 'Like/Dislike', null=True)
     
     def __str__(self):
-        return f"{self.user.user.get_username()} rated {self.question.title}"
+        return f"{self.user.user.get_username()} reacted on {self.question.title}"
     
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -81,13 +81,17 @@ class LikeQuestion(models.Model):
         super(LikeQuestion, self).delete(*args, **kwargs)
     
     class Meta:
-        verbose_name = 'Лайк на вопрос'
-        verbose_name_plural = 'Лайки на вопросы'
+        verbose_name = 'Question reacts'
+        verbose_name_plural = 'Question reacts'
         
 class LikeAnswer(models.Model):
     user = models.ForeignKey('Profile', on_delete=models.CASCADE, verbose_name = 'User ID')
-    answer = models.ForeignKey('Answer', on_delete=models.CASCADE, verbose_name = 'Ответ') 
-    opinion = models.BooleanField(default=True, verbose_name = 'Like/Dislike', null=True) 
+    answer = models.ForeignKey('Answer', on_delete=models.CASCADE, verbose_name = 'Answer') 
+    opinion = models.BooleanField(default=True, verbose_name = 'Like/Dislike', null=False) 
+    
+    def __str__(self): 
+        return f"{self.user.user.get_username()} reacted on {self.answer.author.user.get_username()}'s answer"
+    
     def save(self, *args, **kwargs):
         if not self.pk:
             if self.opinion:
