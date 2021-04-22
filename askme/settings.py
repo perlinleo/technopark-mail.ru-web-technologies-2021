@@ -121,7 +121,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    "/home/pierrelean/technopark-web/technopark-mail.ru-web-technologies-2021/static",
+    'static',
     '/var/www/static/',
 ]
 
