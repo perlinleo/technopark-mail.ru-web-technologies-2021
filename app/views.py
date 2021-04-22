@@ -1,6 +1,7 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render
 from random import randint
+from app.models import Question, Answer, Profile, LikeAnswer, LikeQuestion, Tag
 # Create your views here.
 
 questions = [
@@ -21,8 +22,8 @@ answers = [
         'id': i,
         'question_id': i // 2,
         'text': f'Answer\'s text #{i}',
-        'likesAmount': i + 42,
-        'dislikesAmount': i + 24,
+        'likesAmount': i + 3,
+        'dislikesAmount': i + 3,
         'username': f'user{i}'
     } for i in range(1000)
 ]
@@ -38,10 +39,8 @@ tags = [
 
 
 def getPopularTags():
-    popularTags = []
-    for tag in tags:
-        if tag.get('popularity') > 96:
-            popularTags.append(tag)
+    popularTags = Tag.objects.order_by('popularity')
+    popularTags = popularTags[0:3]
     return popularTags
 
 def paginate(objects_list, request, per_page=10):
@@ -53,54 +52,41 @@ def paginate(objects_list, request, per_page=10):
 
 
 def index(request):
-    all_new_questions = questions.copy()
-    all_new_questions.reverse()
+    questions_page = paginate(Question.objects.all(), request)
     popularTags = getPopularTags()
-    new_questions = paginate(all_new_questions, request)
-
-    return render(request, 'index.html', {'questions': new_questions,
-                                          'popularTags': popularTags})
+    return render(request, 'index.html', {
+        'questions': questions_page,
+        'popularTags': popularTags
+    })
 
 
 def hot_questions(request):
-    all_sorted_questions = questions.copy()
-    all_sorted_questions.sort(key=lambda x: x.get('likesAmount'), reverse=True)
     popularTags = getPopularTags()
-    sorted_questions = paginate(all_sorted_questions, request)
+    questions_page = paginate(Question.objects.all(), request)
+    return render(request, 'hot.html', {
+        'questions': questions_page,
+        'popularTags': popularTags
+    })
 
-    return render(request, 'hot_questions.html', {'questions': sorted_questions,
-                                                  'popularTags': popularTags})
 
 
 def tag_questions(request, name):
-    current_tag = {}
     popularTags = getPopularTags()
-    for tag in tags:
-        if tag.get('name') == name:
-            current_tag = tag
-    current_tag_all_questions = []
-    for question in questions:
-        if current_tag.get('name') in question.get('tags'):
-            current_tag_all_questions.append(question)
-    current_tag_questions = paginate(current_tag_all_questions, request)
-
-    return render(request, 'tag.html', {'tag': current_tag,
-                                        'questions': current_tag_questions,
-                                        'popularTags': popularTags})
+    tagQuestionPage = paginate(Question.objects.filter(tags__name=name), request)
+    return render(request, 'tag.html', {'questions': tagQuestionPage, 'name': name, 
+        'popularTags': popularTags})
 
 
 def answers_for_question(request, pk):
-    question = questions[pk]
-    all_question_answers = []
-    for answer in answers:
-        if answer.get('question_id') == pk:
-            all_question_answers.append(answer)
     popularTags = getPopularTags()
-    question_answers = paginate(all_question_answers, request)
+    current_question = Question.objects.get(id=pk)
+    answers_page = paginate(Answer.objects.filter(question=pk), request, 5)
 
-    return render(request, 'question.html', {'question': question,
-                                             'answers': question_answers,
-                                             'popularTags': popularTags})
+    return render(request, 'question.html', {
+        'question': current_question,
+        'answers': answers_page,
+        'popularTags': popularTags
+    })
 
 
 def login(request):

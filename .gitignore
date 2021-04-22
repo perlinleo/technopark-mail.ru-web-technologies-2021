@@ -5,7 +5,7 @@ venv/
 *.pyc
 
 #SQLite database 
-db.sqlite
+db.sqlite3
 
 #pycache
 askme/__pycache__

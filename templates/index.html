@@ -4,13 +4,14 @@
 {% block headline %}
 
 <div class="d-flex align-items-end ms-5 mb-4 mt-2">
-    <div class="w-50 caption" style="font-weight: 100;">
-        New Questions
+    <div >
+        <a href="{% url 'index' %}" class="w-25 caption" style="font-weight: 100;"> New Questions </a>
     </div>
-    <div>
-        <a href="#" class="w-25 hot-questions">Hot Questions</a>
+    <div class="w-50 caption px-5" style="font-weight: 100; text-decoration: none;">
+        <a href="{% url 'hot_questions' %}" class="w-50 hot-questions" style="text-decoration: none;">Hot Questions</a>
     </div>
 </div>
+
 
 {% endblock headline %}
 
