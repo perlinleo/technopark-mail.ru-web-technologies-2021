@@ -19,6 +19,7 @@ class Question(models.Model):
     tags = models.ManyToManyField('Tag', verbose_name = 'Tags', null = True, blank=True)
     likesAmount = models.IntegerField(default=0, verbose_name='Amount of likes', null=True)
     dislikesAmount = models.IntegerField(default=0, verbose_name='Amount of dislikes', null=True)
+    rating = models.IntegerField(default = 0,verbose_name='Question rating', null = False)
     
     answersAmount = models.IntegerField(default=0, verbose_name='answersAmount')
     
@@ -36,6 +37,7 @@ class Answer(models.Model):
     is_correct = models.BooleanField(verbose_name = 'Is correct?', null = True)
     likesAmount = models.IntegerField(default=0, verbose_name='Amount of likes', null=True)
     dislikesAmount = models.IntegerField(default=0, verbose_name='Amount of dislikes', null=True)
+    rating = models.IntegerField(default = 0,verbose_name='Question rating', null = False)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -55,6 +57,7 @@ class Answer(models.Model):
         verbose_name = 'Answer'
         verbose_name_plural = 'Answers'
         
+
 class LikeQuestion(models.Model):
     user = models.ForeignKey('Profile', on_delete=models.CASCADE, verbose_name = 'User ID')
     question = models.ForeignKey('Question', on_delete=models.CASCADE, verbose_name = 'Question ID') 
@@ -69,14 +72,16 @@ class LikeQuestion(models.Model):
                 self.question.likesAmount += 1
             else:
                 self.question.dislikesAmount += 1
+            self.question.rating = self.question.likesAmount - self.question.dislikesAmount
             self.question.save()
         super(LikeQuestion, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if self.opinion:
-            self.question.likesAmount += 1
+            self.question.likesAmount -= 1
         else:
-            self.question.likesAmount += 1
+            self.question.dislikesAmount -= 1
+        self.question.rating = self.question.likesAmount - self.question.dislikesAmount
         self.question.save()
         super(LikeQuestion, self).delete(*args, **kwargs)
     
@@ -87,7 +92,7 @@ class LikeQuestion(models.Model):
 class LikeAnswer(models.Model):
     user = models.ForeignKey('Profile', on_delete=models.CASCADE, verbose_name = 'User ID')
     answer = models.ForeignKey('Answer', on_delete=models.CASCADE, verbose_name = 'Answer') 
-    opinion = models.BooleanField(default=True, verbose_name = 'Like/Dislike', null=False) 
+    opinion = models.BooleanField(default=True, verbose_name = 'Like?', null=False) 
     
     def __str__(self): 
         return f"{self.user.user.get_username()} reacted on {self.answer.author.user.get_username()}'s answer"
@@ -100,16 +105,20 @@ class LikeAnswer(models.Model):
             else:
                 self.answer.dislikesAmount += 1
                 
+            self.answer.rating = self.answer.likesAmount - self.answer.dislikesAmount
             self.answer.save()
+            
         super(LikeAnswer, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
         if self.opinion:
-                self.answer.likesAmount += 1
+                self.answer.likesAmount -= 1
                 
         else:
-                self.answer.dislikesAmount += 1
-                
+                self.answer.dislikesAmount -= 1
+
+        
+        self.answer.rating = self.answer.likesAmount - self.answer.dislikesAmount
         self.answer.save()
         super(LikeAnswer, self).delete(*args, **kwargs)
     

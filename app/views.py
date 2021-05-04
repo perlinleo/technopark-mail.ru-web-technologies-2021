@@ -2,40 +2,9 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render
 from random import randint
 from app.models import Question, Answer, Profile, LikeAnswer, LikeQuestion, Tag
-# Create your views here.
 
-questions = [
-    {
-        'id': i,
-        'title': f'Title #{i}',
-        'text': f'Question\'s text #{i}',
-        'likesAmount': randint(0, 1000),
-        'dislikesAmount': randint(0, 500),
-        'answersAmount': 2,
-        'tags': {f'Tag{randint(0, 100)}', f'Tag{randint(0, 100)}'},
-        'username': f'user{i}'
-    } for i in range(1000)
-]
 
-answers = [
-    {
-        'id': i,
-        'question_id': i // 2,
-        'text': f'Answer\'s text #{i}',
-        'likesAmount': i + 3,
-        'dislikesAmount': i + 3,
-        'username': f'user{i}'
-    } for i in range(1000)
-]
 
-tags = [
-    {
-        'id': i,
-        'questions_id': {randint(0, 30), randint(0, 30)},
-        'name': f'Tag{i}',
-        'popularity': randint(0, 100)
-    } for i in range(100)
-]
 
 
 def getPopularTags():
@@ -62,7 +31,7 @@ def index(request):
 
 def hot_questions(request):
     popularTags = getPopularTags()
-    questions_page = paginate(Question.objects.all(), request)
+    questions_page = paginate(Question.objects.order_by('-rating'), request)
     return render(request, 'hot.html', {
         'questions': questions_page,
         'popularTags': popularTags
@@ -80,7 +49,7 @@ def tag_questions(request, name):
 def answers_for_question(request, pk):
     popularTags = getPopularTags()
     current_question = Question.objects.get(id=pk)
-    answers_page = paginate(Answer.objects.filter(question=pk), request, 5)
+    answers_page = paginate(Answer.objects.filter(question=pk).order_by('rating'), request, 5)
 
     return render(request, 'question.html', {
         'question': current_question,
