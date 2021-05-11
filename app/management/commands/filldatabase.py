@@ -81,9 +81,8 @@ class Command(BaseCommand):
         for i in tqdm(range(firstProfileID,lastProfileID+diff), desc="Creating questions"):
             tags = list(Tag.objects.values_list('id', flat=True))
             tags_for_question = sample(tags, k=randint(1, 5))
-            
             current_question = Question.objects.create(
-                author = Profile.objects.get(id=i%lastProfileID),
+                author = Profile.objects.get(id=(i%lastProfileID)+1),
                 title=f.sentence(),
                 text=f.text(),
             )
@@ -145,10 +144,10 @@ class Command(BaseCommand):
 
     def fill_full_db(self, count):
         print('Creating users')
-        self.fill_users(count)
+        #self.fill_users(count)
         print('Users are created')
         print('Creating tags')
-        self.fill_tags(count)
+        #self.fill_tags(count)
         print('Tags are created')
         print('Creating questions')
         self.fill_questions(count * 10)

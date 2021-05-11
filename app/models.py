@@ -21,7 +21,7 @@ class Question(models.Model):
     dislikesAmount = models.IntegerField(default=0, verbose_name='Amount of dislikes', null=True)
     rating = models.IntegerField(default = 0,verbose_name='Question rating', null = False)
     
-    answersAmount = models.IntegerField(default=0, verbose_name='answersAmount')
+    
     
     def __str__(self):
         return self.title
@@ -38,17 +38,7 @@ class Answer(models.Model):
     likesAmount = models.IntegerField(default=0, verbose_name='Amount of likes', null=True)
     dislikesAmount = models.IntegerField(default=0, verbose_name='Amount of dislikes', null=True)
     rating = models.IntegerField(default = 0,verbose_name='Question rating', null = False)
-
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.question.answersAmount += 1
-            self.question.save()
-        super(Answer, self).save(*args, **kwargs)
-
-    def delete(self, *args, **kwargs):
-        self.question.answersAmount -= 1
-        self.question.save()
-        super(Answer, self).delete(*args, **kwargs)   
+ 
          
     def __str__(self):
         return f"{self.author.user.get_username()} answers on {self.question.__str__()}"
