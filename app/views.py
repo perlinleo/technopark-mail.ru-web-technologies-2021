@@ -2,6 +2,7 @@ from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render
 from random import randint
 from app.models import Question, Answer, Profile, LikeAnswer, LikeQuestion, Tag
+from django.db.models import Count
 
 
 
@@ -21,7 +22,10 @@ def paginate(objects_list, request, per_page=10):
 
 
 def index(request):
-    questions_page = paginate(Question.objects.all(), request)
+    questions_page = paginate(Question.objects.all().annotate(
+            answers_amount=Count('answer')
+            ), 
+            request)
     popularTags = getPopularTags()
     return render(request, 'index.html', {
         'questions': questions_page,
@@ -31,7 +35,12 @@ def index(request):
 
 def hot_questions(request):
     popularTags = getPopularTags()
-    questions_page = paginate(Question.objects.order_by('-rating'), request)
+    questions_page = paginate(
+        Question.objects.order_by('-rating').annotate(
+            answers_amount=Count('answer')
+            ), 
+            request)
+    
     return render(request, 'hot.html', {
         'questions': questions_page,
         'popularTags': popularTags

@@ -29,7 +29,9 @@
                 <a href="{% url 'answers_for_questions' pk=question.id %}" class="btn btn-warning">
                     Answer!
                 </a>
-                
+                <a href="{% url 'answers_for_questions' pk=question.id %}">
+                    <button type="button" class="btn btn-light"> {{ question.answers_amount }} answers </button>
+                </a>
             </div>
             <div>
                 <button class="btn btn-danger col-3" style="width: 100px;" type="submit">
