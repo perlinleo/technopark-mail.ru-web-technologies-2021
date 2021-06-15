@@ -50,7 +50,10 @@ def hot_questions(request):
 
 def tag_questions(request, name):
     popularTags = getPopularTags()
-    tagQuestionPage = paginate(Question.objects.filter(tags__name=name), request)
+    tagQuestionPage = paginate(Question.objects.filter(tags__name=name).annotate(
+            answers_amount=Count('answer')
+            ), 
+            request)
     return render(request, 'tag.html', {'questions': tagQuestionPage, 'name': name, 
         'popularTags': popularTags})
 
