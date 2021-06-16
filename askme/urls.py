@@ -1,21 +1,10 @@
-"""askme URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.conf.urls import url
 from app import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,8 +12,15 @@ urlpatterns = [
     path('hot/', views.hot_questions, name='hot_questions'),
     path('tag/<str:name>/', views.tag_questions, name='tag_questions'),
     path('question/<int:pk>/', views.answers_for_question, name='answers_for_questions'),
-    path('login/', views.login, name='login'),
-    path('signup/', views.signup, name='signup'),
+    path('/login/', views.login, name='login'),
+    path('votes/', views.votes, name='votes'),
+     path('/logout/', views.logout, name='logout'),
+     path(' ask/login/', views.login, name='login'),
+    path('/signup/', views.signup, name='signup'),
     path('ask/', views.ask, name='ask'),
     path('settings/', views.settings, name='settings'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+url('/ask/account/', admin.site.urls)
+url('ask/', admin.site.urls)

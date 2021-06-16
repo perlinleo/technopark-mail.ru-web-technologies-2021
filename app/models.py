@@ -11,7 +11,17 @@ class Profile(models.Model):
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'
-    
+
+
+
+class TagManager(models.Manager):
+    def add_tags_to_question(self, added_tags):
+        tags = self.filter(name__in=added_tags)
+        for tag in tags:
+            tag.popularity += 1
+            tag.save()
+        return tags
+
 class Question(models.Model):
     author = models.ForeignKey('Profile', on_delete=models.CASCADE, verbose_name = 'Author ID')
     title = models.CharField(max_length = 258, verbose_name = 'Title')
@@ -56,6 +66,20 @@ class LikeQuestion(models.Model):
     def __str__(self):
         return f"{self.user.user.get_username()} reacted on {self.question.title}"
     
+    def change_opinion(self, *args, **kwargs):
+        if(self.opinion):
+            self.question.likesAmount -= 1
+            self.question.dislikesAmount +=1
+        else:
+            self.question.dislikesAmount -=1
+            self.question.likesAmount += 1
+
+        print(f"i was {self.opinion}")
+        self.opinion=not self.opinion
+        self.save()
+        print(f"i am {self.opinion}")
+        self.question.rating = self.question.likesAmount - self.question.dislikesAmount
+        self.question.save()
     def save(self, *args, **kwargs):
         if not self.pk:
             if self.opinion:
@@ -65,7 +89,9 @@ class LikeQuestion(models.Model):
             self.question.rating = self.question.likesAmount - self.question.dislikesAmount
             self.question.save()
         super(LikeQuestion, self).save(*args, **kwargs)
+        return self.question.rating
 
+    
     def delete(self, *args, **kwargs):
         if self.opinion:
             self.question.likesAmount -= 1
@@ -74,7 +100,8 @@ class LikeQuestion(models.Model):
         self.question.rating = self.question.likesAmount - self.question.dislikesAmount
         self.question.save()
         super(LikeQuestion, self).delete(*args, **kwargs)
-    
+        return self.question.rating
+        
     class Meta:
         verbose_name = 'Question reacts'
         verbose_name_plural = 'Question reacts'
@@ -86,7 +113,7 @@ class LikeAnswer(models.Model):
     
     def __str__(self): 
         return f"{self.user.user.get_username()} reacted on {self.answer.author.user.get_username()}'s answer"
-    
+   
     def save(self, *args, **kwargs):
         if not self.pk:
             if self.opinion:
@@ -120,6 +147,9 @@ class LikeAnswer(models.Model):
 class Tag(models.Model):
     name = models.CharField(max_length=64, verbose_name = 'Name')
     popularity = models.IntegerField(default=0, verbose_name='Popularity', null=False)
+
+    objects = TagManager()
+
     def __str__(self):
         return self.name
     

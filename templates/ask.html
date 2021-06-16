@@ -6,36 +6,25 @@
 {% endblock headline %}
 
 {% block content %}
-                    <form>
-                        <div class="d-flex ms-5 mb-5">
-                            <label for="inputTitle"
-                                class="col-sm-2 col-form-label col-form-label-lg caption-small">Title</label>
-                            <div class="d-flex w-100">
-                                <input type="text" class="form-control" placeholder="Enter your question`s label"
-                                    id="inputTitle">
-                            </div>
-                        </div>
-                        <div class="d-flex ms-5 mb-5">
-                            <label for="inputText"
-                                class="col-sm-2 col-form-label col-form-label-lg caption-small">Text</label>
-                            <div class="d-flex w-100">
-                                <textarea class="form-control" rows="10" placeholder="Enter your question"
-                                    id="inputText"></textarea>
-                            </div>
-                        </div>
-                        <div class="d-flex ms-5 mb-5">
-                            <label for="inputTags"
-                                class="col-sm-2 col-form-label col-form-label-lg caption-small">Tags</label>
-                            <div class="d-flex w-100">
-                                <input type="text" class="form-control" placeholder="Ubuntu, Techopark, ..."
-                                    id="inputTags">
-                            </div>
-                        </div>
-                        <div class="d-flex mb-3 w-100 justify-content-end">
-                            <div class="d-flex">
-                                <button type="submit" class="btn btn-success btn-lg">ASK!</button>
-                            </div>
+                    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
 
-                        </div>
-                    </form>
+        {% for form_field in form %}
+        <div class="d-flex ms-5 mb-3">
+            <label for="inputTitle" class="col-sm-2 col-form-label col-form-label-lg">{{ form_field.label }}</label>
+            <div class="d-flex w-100">
+                {{ form_field }}
+                <div class="d-flex w-100 ms-3 invalid-feedback">
+                    {{ form_field.errors }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="d-flex mb-3 w-100 justify-content-end">
+            <div class="d-flex">
+                <button type="submit" class="btn btn-success btn-lg">ASK!</button>
+            </div>
+
+        </div>
+      </form>
 {% endblock content %}

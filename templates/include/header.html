@@ -16,13 +16,20 @@
             </button>
 
             <!-- Если авторизован -->
+            {% if request.user.is_authenticated %}
             <a href="#" class="d-block link-dark text-decoration-none" id="dropdownUser1" data-bs-toggle="dropdown"
                 aria-expanded="false">
                 <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                    <img src="{% static "img/my_avatar.jpg" %}" alt="mdo" width="40" height="40"
+                    {% if request.user.profile.avatar %}
+                    <img src="{{ request.user.profile.avatar.url }}" alt="mdo" width="40" height="40"
                         class="me-lg-3 rounded-circle">
+                    {% else %}
+                    <img src="{% static "img/no-avatar.png" %}" alt="mdo" width="40" height="40"
+                        class="me-lg-3 rounded-circle">
+                    {% endif %}
+                    
                     <div class="font-weight-bold dropdown-toggle" style="width: 150px;">
-                        Leonid Perlin
+                        {{ request.user.username }}
                     </div>
                 </div>
 
@@ -32,18 +39,18 @@
                 <li>
                     <hr class="dropdown-divider">
                 </li>
-                <li><a class="dropdown-item" href="#">Sign out</a></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Sign out</a></li>
             </ul>
-
-            <!-- если не авторизован -->
-            {#<a href="{% url 'login' %}" <button class="btn btn-dark " style=" background-color:blueviolet;" type="submit"> #}
-            {#    Log in                                                                            #}
-            {#</button>                                                                             #}
-            {#<a href="{% url 'signup' %}">                                                          #}
-            {#    <button class="btn btn-dark " style=" background-color:blueviolet;" type="submit">#}
-            {#    Sign in                                                                             #}
-            {#</button></a>                                                                           #}
+            {% else %}
             
+            <a href="{% url 'login' %}" <button class="btn btn-dark " style=" background-color:blueviolet;" type="submit">
+                Log in                                                                            
+            </button>                                                                            
+           <a href="{% url 'signup' %}">                                                         
+                <button class="btn btn-dark " style=" background-color:blueviolet;" type="submit">
+               Sign in                                                                            
+            </button></a>                                                                           
+            {% endif %}
         </div>
     </div>
     </div>
