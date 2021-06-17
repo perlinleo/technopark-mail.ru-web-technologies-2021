@@ -189,7 +189,6 @@ def answers_for_question(request, pk):
                     answers_page = paginate(Answer.objects.filter(question=pk).order_by('rating'), request, 5)
                     return redirect(reverse('answers_for_questions', kwargs={'pk': pk}) + f"?page={answers_page.paginator.num_pages}")
 
-    
         return render(request, 'question.html', {
             'dislike_color': is_dislike,
             'like_color': is_like,
