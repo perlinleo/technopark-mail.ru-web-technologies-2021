@@ -12,11 +12,11 @@ $('.js-votes').click(function(ev) {
             action: action,
         },
     }).done(function(data) {
-        $('#rating-' + id).text(data.rating);
-        
+        location.reload()
     });
-    location.reload();
+    
     console.log(type + " " + id + ": " + action);
+    location.reload();
 })
 
 $('.js-not-authorized').click(function(ev) {

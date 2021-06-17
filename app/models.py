@@ -1,13 +1,27 @@
 from django.db import models
 from django.contrib.auth.models import User
-# Create your models here.
+
+class ProfileManager(models.Manager):
+    def best_members(self):
+        a = self.annotate(questions_amount = models.Count('question')).order_by('questions_amount')[:10]
+        
+       
+        return a
+
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name = 'User ID')
     avatar = models.ImageField(max_length=1024, verbose_name = 'Avatar', null = True)
 
+
+    objects = ProfileManager()
+    
     def __str__(self):
         return self.user.get_username()
     
+
+
     class Meta:
         verbose_name = 'Profile'
         verbose_name_plural = 'Profiles'
@@ -15,6 +29,10 @@ class Profile(models.Model):
 
 
 class TagManager(models.Manager):
+    def get_popular_tags(self):
+        #return self.annotate(questions_amount = models.Count('question')).order_by('-questions_amount')[:10]
+        return self.order_by('-popularity')[:10]
+
     def add_tags_to_question(self, added_tags):
         tags = self.filter(name__in=added_tags)
         for tag in tags:
@@ -40,7 +58,12 @@ class Question(models.Model):
         verbose_name = 'Question'
         verbose_name_plural = 'Questions'
 
+
+
 class Answer(models.Model):
+    def change_flag_is_correct(self):
+        self.is_correct = not self.is_correct
+        self.save()
     author = models.ForeignKey('Profile', on_delete=models.CASCADE, verbose_name = 'Author ID')
     question = models.ForeignKey('Question', on_delete=models.CASCADE, verbose_name = 'Question ID')
     text = models.TextField(verbose_name = 'Text')
@@ -49,7 +72,7 @@ class Answer(models.Model):
     dislikesAmount = models.IntegerField(default=0, verbose_name='Amount of dislikes', null=True)
     rating = models.IntegerField(default = 0,verbose_name='Question rating', null = False)
  
-         
+
     def __str__(self):
         return f"{self.author.user.get_username()} answers on {self.question.__str__()}"
         

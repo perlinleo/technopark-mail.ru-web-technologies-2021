@@ -14,11 +14,14 @@ urlpatterns = [
     path('question/<int:pk>/', views.answers_for_question, name='answers_for_questions'),
     path('/login/', views.login, name='login'),
     path('votes/', views.votes, name='votes'),
+    path('correct/', views.is_correct, name='correct'),
      path('/logout/', views.logout, name='logout'),
-     path(' ask/login/', views.login, name='login'),
-    path('/signup/', views.signup, name='signup'),
+     path(' /ask/login/', views.login, name='login2'),
+    path('signup/', views.signup, name='signup'),
     path('ask/', views.ask, name='ask'),
     path('settings/', views.settings, name='settings'),
+    path('ask/login', views.login, name='login1'),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

@@ -1,6 +1,7 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.shortcuts import render, redirect, reverse
 from random import randint
+from django.http import Http404
 from app.models import Question, Answer, Profile, LikeAnswer, LikeQuestion, Tag
 from django.db.models import Count
 from django.http import JsonResponse
@@ -12,10 +13,7 @@ from app.forms import *
 
 
 
-def getPopularTags():
-    popularTags = Tag.objects.order_by('popularity')
-    popularTags = popularTags[0:3]
-    return popularTags
+
 
 def paginate(objects_list, request, per_page=10):
     paginator = Paginator(objects_list, 5)
@@ -26,10 +24,11 @@ def paginate(objects_list, request, per_page=10):
 
 
 
-
+    
 
 def index(request):
-    popularTags = getPopularTags()
+    best_users = Profile.objects.best_members()
+ 
     questions_page = paginate(Question.objects.all().order_by('-id').annotate(
             answers_amount=Count('answer')
             ), 
@@ -54,20 +53,22 @@ def index(request):
 
     
     print(reacts_page)
-    
+    print(best_users)
     
 
     return render(request, 'index.html', {
+        'best_users': Profile.objects.best_members(), 
         'liked_questions': liked_questions,
         'disliked_questions': disliked_questions,
         'reacts_page': reacts_page,
         'questions': questions_page,
-        'popularTags': popularTags
+        'popularTags': Tag.objects.get_popular_tags()
     })
 
 
 def hot_questions(request):
-        popularTags = getPopularTags()
+        best_users = Profile.objects.best_members()
+    
         questions_page = paginate(
             Question.objects.order_by('-rating').annotate(
                 answers_amount=Count('answer')
@@ -98,11 +99,12 @@ def hot_questions(request):
         
 
         return render(request, 'hot.html', {
+            'best_users': Profile.objects.best_members(), 
             'liked_questions': liked_questions,
             'disliked_questions': disliked_questions,
             'reacts_page': reacts_page,
             'questions': questions_page,
-            'popularTags': popularTags
+            'popularTags': Tag.objects.get_popular_tags()
         })
 
 @login_required
@@ -113,69 +115,92 @@ def logout(request):
         return redirect(previous_page)
     return redirect("/")
 
+
 def tag_questions(request, name):
-    popularTags = getPopularTags()
-    questions_page = paginate(Question.objects.filter(tags__name=name).annotate(
-            answers_amount=Count('answer')
-            ), 
-            request)
-    reacts_page= {}
-    liked_questions = {}
-    disliked_questions = {}
-    try: 
-        userProfile = Profile.objects.get(user_id=request.user.id)
-    except: 
-        userProfile = Profile.objects.get(user_id=1)
-    for que in questions_page:
-        try:
-            rea = LikeQuestion.objects.get(question=que, user=userProfile.id)
-            reacts_page[rea.question.id]=rea.opinion
-            if(rea.opinion):
-                liked_questions[rea.question.id]=True
-            else:
-                disliked_questions[rea.question.id]=False
-        except:
-            reacts_page[que.id]="None"
+    try:
+        tag = Tag.objects.get(name=name)
+        questions_page = paginate(Question.objects.filter(tags__name=name).annotate(
+                answers_amount=Count('answer')
+                ), 
+                request)
+        reacts_page= {}
+        liked_questions = {}
+        disliked_questions = {}
+        try: 
+            userProfile = Profile.objects.get(user_id=request.user.id)
+        except: 
+            userProfile = Profile.objects.get(user_id=1)
+        for que in questions_page:
+            try:
+                rea = LikeQuestion.objects.get(question=que, user=userProfile.id)
+                reacts_page[rea.question.id]=rea.opinion
+                if(rea.opinion):
+                    liked_questions[rea.question.id]=True
+                else:
+                    disliked_questions[rea.question.id]=False
+            except:
+                reacts_page[que.id]="None"
 
-    
-    print(reacts_page)
-    
-    
+        
+        print(reacts_page)
+        amount = f"{Question.objects.filter(tags__name=name).count()} questions with tag {name}"
 
-    return render(request, 'tag.html', {
-        'liked_questions': liked_questions,
-        'disliked_questions': disliked_questions,
-        'reacts_page': reacts_page,
-        'questions': questions_page,
-        'popularTags': popularTags
-    })
-
+        return render(request, 'tag.html', {
+            'best_users': Profile.objects.best_members(), 
+            'name': amount,
+            'liked_questions': liked_questions,
+            'disliked_questions': disliked_questions,
+            'reacts_page': reacts_page,
+            'questions': questions_page,
+            'popularTags': Tag.objects.get_popular_tags()
+        })
+    except Tag.DoesNotExist:
+        raise Http404
 
 def answers_for_question(request, pk):
-    popularTags = getPopularTags()
-    current_question = Question.objects.get(id=pk)
-    answers_page = paginate(Answer.objects.filter(question=pk).order_by('rating'), request, 5)
+    try:
+        current_question = Question.objects.get(id=pk)
+        try: 
+            userProfile = Profile.objects.get(user_id=request.user.id)
+        except: 
+            userProfile = Profile.objects.get(user_id=1)
+        is_like = 'btn-secondary'
+        is_dislike = 'btn-secondary'
+        try:
         
+            if(LikeQuestion.objects.get(question=current_question, user=userProfile.id).opinion):
+                is_like = 'btn-success'
+            else:
+                is_dislike = 'btn-danger'
+        except:
+            print("not found")
+        answers_page = paginate(Answer.objects.filter(question=pk).order_by('rating'), request, 5)
+            
 
-    if request.method == 'GET':
-            form = AnswerForm()
-    else:
-            if not request.user.is_authenticated:
-                return redirect(f"/login/?next={request.get_full_path()}")
+        if request.method == 'GET':
+                form = AnswerForm()
+        else:
+                if not request.user.is_authenticated:
+                    return redirect(f"login/?next={request.get_full_path()}")
 
-            form = AnswerForm(profile_id=request.user.profile.id, question_id=pk, data=request.POST)
-            if form.is_valid():
-                form.save()
-                answers_page = paginate(Answer.objects.filter(question=pk).order_by('rating'), request, 5)
-                return redirect(reverse('answers_for_questions', kwargs={'pk': pk}) + f"?page={answers_page.paginator.num_pages}")
+                form = AnswerForm(profile_id=request.user.profile.id, question_id=pk, data=request.POST)
+                if form.is_valid():
+                    form.save()
+                    answers_page = paginate(Answer.objects.filter(question=pk).order_by('rating'), request, 5)
+                    return redirect(reverse('answers_for_questions', kwargs={'pk': pk}) + f"?page={answers_page.paginator.num_pages}")
 
-
-    return render(request, 'question.html', {
-        'form': form,
-        'question': current_question,
-        'answers': answers_page,
-        'popularTags': popularTags
-    })
+    
+        return render(request, 'question.html', {
+            'dislike_color': is_dislike,
+            'like_color': is_like,
+            'best_users': Profile.objects.best_members(), 
+            'form': form,
+            'question': current_question,
+            'answers': answers_page,
+            'popularTags': Tag.objects.get_popular_tags()
+        })
+    except Question.DoesNotExist:
+        raise Http404
 
 
 def login(request):
@@ -190,9 +215,10 @@ def login(request):
                 return redirect(request.POST.get('next','/'))
             else:
                 form.add_error("password","Incorrect login or password")
-    popularTags = getPopularTags()
+ 
     return render(request, 'login.html', {
-        'popularTags': popularTags,
+        'best_users': Profile.objects.best_members(), 
+        'popularTags': Tag.objects.get_popular_tags(),
         'form': form})
     
 
@@ -206,9 +232,9 @@ def signup(request):
             user = form.save()
             django_login(request, user)
             return redirect(request.POST.get('next', '/'))
-    popularTags = getPopularTags()
 
-    return render(request, 'signup.html', {'popularTags': popularTags, 
+
+    return render(request, 'signup.html', {'popularTags': Tag.objects.get_popular_tags(), 
     'form': form})
 
 @login_required
@@ -220,11 +246,11 @@ def ask(request):
         if form.is_valid():
             question = form.save()
             return redirect(reverse('answers_for_questions', kwargs={'pk': question.pk}))
-    popularTags = popularTags = getPopularTags()
-
     return render(request, 
-            'ask.html', {'popularTags': popularTags,
-                         'form': form})
+            'ask.html', {
+                'best_users': Profile.objects.best_members(), 
+                'popularTags': Tag.objects.get_popular_tags(),
+                'form': form})
 
 
 
@@ -242,11 +268,14 @@ def settings(request):
             profile_picture.save()
             form_updated = True
             django_login(request, user)
-    popularTags = popularTags = getPopularTags()
+   
 
-    return render(request, 'settings.html', {'popularTags': popularTags,
-    'form': form,
-    'profile_picture': profile_picture})
+    return render(request, 'settings.html', {
+        'best_users': Profile.objects.best_members(), 
+        'popularTags': Tag.objects.get_popular_tags(),
+        'form': form,
+        'profile_picture': profile_picture
+        })
 
 
 @require_POST
@@ -254,10 +283,7 @@ def settings(request):
 def votes(request):
     data = request.POST
     rating = 0
-    print("HELLO!")
-    print(data['type'])
     if data['type'] == 'question_react':
-        print(data)
         form = LikeQuestionForm(user=request.user.profile, question=data['id'], is_like=(data['action'] == 'like'))
         rating = form.save()
     elif data['type'] == 'answer':
