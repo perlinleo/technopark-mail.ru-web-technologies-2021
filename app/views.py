@@ -24,18 +24,8 @@ def paginate(objects_list, request, per_page=10):
 
 
 
-    
-
-def index(request):
-    best_users = Profile.objects.best_members()
- 
-    questions_page = paginate(Question.objects.all().order_by('-id').annotate(
-            answers_amount=Count('answer')
-            ), 
-            request)
-    reacts_page= {}
-    liked_questions = {}
-    disliked_questions = {}
+def get_user_reactions(questions_page, request):
+    result=[{},{}]
     try: 
         userProfile = Profile.objects.get(user_id=request.user.id)
     except: 
@@ -44,20 +34,27 @@ def index(request):
         for que in questions_page:
             try:
                 rea = LikeQuestion.objects.get(question=que, user=userProfile.id)
-                reacts_page[rea.question.id]=rea.opinion
                 if(rea.opinion):
-                    liked_questions[rea.question.id]=True
+                    result[0][rea.question.id]=True
                 else:
-                    disliked_questions[rea.question.id]=False
+                    result[1][rea.question.id]=False
             except:
-                reacts_page[que.id]="None"
-    
+                pass
+    return result
 
+
+def index(request):
+    best_users = Profile.objects.best_members()
+ 
+    questions_page = paginate(Question.objects.all().order_by('-id').annotate(
+            answers_amount=Count('answer')
+            ), 
+            request)
+    reactions = get_user_reactions(questions_page, request)
     return render(request, 'index.html', {
         'best_users': Profile.objects.best_members(), 
-        'liked_questions': liked_questions,
-        'disliked_questions': disliked_questions,
-        'reacts_page': reacts_page,
+        'liked_questions': reactions[0],
+        'disliked_questions': reactions[1],
         'questions': questions_page,
         'popularTags': Tag.objects.get_popular_tags()
     })
@@ -71,32 +68,13 @@ def hot_questions(request):
                 answers_amount=Count('answer')
                 ), 
                 request)
-    
-        reacts_page= {}
-        liked_questions = {}
-        disliked_questions = {}
-        try: 
-            userProfile = Profile.objects.get(user_id=request.user.id)
-        except: 
-            userProfile = -1
-        if(userProfile!=-1):
-            for que in questions_page:
-                try:
-                    rea = LikeQuestion.objects.get(question=que, user=userProfile.id)
-                    reacts_page[rea.question.id]=rea.opinion
-                    if(rea.opinion):
-                        liked_questions[rea.question.id]=True
-                    else:
-                        disliked_questions[rea.question.id]=False
-                except:
-                    reacts_page[que.id]="None"
 
+        reactions = get_user_reactions(questions_page, request)
 
         return render(request, 'hot.html', {
             'best_users': Profile.objects.best_members(), 
-            'liked_questions': liked_questions,
-            'disliked_questions': disliked_questions,
-            'reacts_page': reacts_page,
+            'liked_questions': reactions[0],
+            'disliked_questions': reactions[1],
             'questions': questions_page,
             'popularTags': Tag.objects.get_popular_tags()
         })
@@ -117,34 +95,14 @@ def tag_questions(request, name):
                 answers_amount=Count('answer')
                 ), 
                 request)
-        reacts_page= {}
-        liked_questions = {}
-        disliked_questions = {}
-        try: 
-            userProfile = Profile.objects.get(user_id=request.user.id)
-        except: 
-            userProfile = -1
-        if(userProfile!=-1):
-            for que in questions_page:
-                try:
-                    rea = LikeQuestion.objects.get(question=que, user=userProfile.id)
-                    reacts_page[rea.question.id]=rea.opinion
-                    if(rea.opinion):
-                        liked_questions[rea.question.id]=True
-                    else:
-                        disliked_questions[rea.question.id]=False
-                except:
-                    reacts_page[que.id]="None"
-
-            
+        reactions = get_user_reactions(questions_page, request)
         amount = f"{Question.objects.filter(tags__name=name).count()} questions with tag {name}"
 
         return render(request, 'tag.html', {
             'best_users': Profile.objects.best_members(), 
+            'liked_questions': reactions[0],
+            'disliked_questions': reactions[1],
             'name': amount,
-            'liked_questions': liked_questions,
-            'disliked_questions': disliked_questions,
-            'reacts_page': reacts_page,
             'questions': questions_page,
             'popularTags': Tag.objects.get_popular_tags()
         })
@@ -168,7 +126,7 @@ def answers_for_question(request, pk):
                 else:
                     is_dislike = 'btn-danger'
             except:
-                print("not found")
+                pass
         answers_page = paginate(Answer.objects.filter(question=pk).order_by('rating'), request, 5)
             
 
@@ -228,7 +186,10 @@ def signup(request):
             return redirect(request.POST.get('next', '/'))
 
 
-    return render(request, 'signup.html', {'popularTags': Tag.objects.get_popular_tags(), 
+    return render(request, 'signup.html', 
+    {
+        'best_users': Profile.objects.best_members(), 
+        'popularTags': Tag.objects.get_popular_tags(), 
     'form': form})
 
 @login_required
