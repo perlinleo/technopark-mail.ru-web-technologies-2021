@@ -144,10 +144,10 @@ class Command(BaseCommand):
 
     def fill_full_db(self, count):
         print('Creating users')
-        #self.fill_users(count)
+        self.fill_users(count)
         print('Users are created')
         print('Creating tags')
-        #self.fill_tags(count)
+        self.fill_tags(count)
         print('Tags are created')
         print('Creating questions')
         self.fill_questions(count * 10)
