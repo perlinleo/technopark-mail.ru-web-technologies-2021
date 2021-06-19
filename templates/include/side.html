@@ -1,0 +1,41 @@
+{% load static %}
+
+<div class="d-flex flex-column align-items-left ms-5 ps-5" style="width: 400px;">
+    <div class="d-flex caption mt-5 pt-4">
+        Popular Tags
+    </div>
+    <div class="d-flex flex-row align-items-center flex-wrap">
+        {% for tag in popularTags %}
+        <a href = {% url 'tag_questions' name=tag.name %}>
+            <div class="d-flex btn btn-secondary btn-sm tag">
+                {{ tag.name }}
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+<div class="d-flex flex-column align-items-left ms-5 ps-5">
+    <div class="d-flex caption mt-3 mb-2">
+        Best Members
+    </div>
+    {% for user in best_users %}
+    <div class="mb-2">
+        {% if user.avatar %}
+              
+                {% with 'uploads/{{ user.avatar }}'|cut:"hot/" as image_static %}
+                
+                <img class="rounded-circle" src="http://127.0.0.1:8000/uploads/{{ user.avatar }}" width="50px"
+                    height="50px">
+                {% endwith %}    
+                {% else %}
+                
+                
+                <img class="rounded-circle" src="{% static "img/no-avatar.png" %}" width="50px"
+                    height="50px">
+                {% endif %}
+        <a href="#" class="text-decoration-none member">
+            {{user.user.username}}        
+        </a>
+    </div>    
+        {% endfor %}
+</div>

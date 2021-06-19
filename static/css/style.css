@@ -1,0 +1,148 @@
+* {
+    font-family: "Times New Roman";
+    font-size: large;
+    text-align: left;
+}
+
+body {
+    padding-top: 8rem;
+}
+.question {
+    border: 1px grey solid;
+    margin-top: 20px;
+    border-radius: 15px;
+    padding: 20px;
+}
+.question-header{
+    font-size: 30px;
+    padding: 20px;
+    color: rgb(234, 0, 255);
+    text-shadow: black 1px 1px;
+    text-decoration-color: black;
+    font-weight: 500;
+}
+.user {
+    margin-left: 20px;
+}
+.navbar-brand {
+    font-size: xx-large;
+}
+.brand-description {
+    position: absolute;
+    left: 5%;
+    margin-top: 9px;
+}
+.brand {
+    position: relative;
+}
+.caption {
+    font-size: x-large;
+    color: black;
+    text-shadow: magenta 2px 2px;
+    text-decoration: magenta;
+    text-decoration: underline;
+    font-weight: 100;
+    font-size: 40px;
+}
+
+.caption-small {
+    font-size: x-large;
+    color: black;
+    text-shadow: magenta 2px 2px;
+    text-decoration: magenta;
+    text-decoration: underline;
+    font-weight: 100;
+    font-size: 30px;
+}
+
+img {
+    border: 2px solid rgb(83, 0, 83);
+}
+
+.hot-questions {
+    font-size: x-large;
+    color: black;
+    text-shadow: red 2px 2px;
+    text-decoration: underline;
+    font-weight: 100;
+    font-size: 40px;
+}
+
+.hot-questions-inactive {
+    font-size: x-large;
+    color: black;
+    text-shadow: red 2px 2px;
+    text-decoration: none;
+    font-weight: 100;
+    font-size: 40px;
+}
+.popular-tag {
+    font-size: x-large;
+}
+ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+
+.my-footer {
+    padding-top: 6rem;
+}
+
+.tag {
+    box-shadow: 2px -1px rgba(255, 0, 255, 0.514);
+    background-color: rgb(255, 255, 255);
+    color:black;
+    width: 100px;
+    flex-wrap: wrap;
+    margin: 5px;
+}
+
+.tag-under-post {
+    background-color: rgb(250, 215, 255);
+    color:black;
+    
+    
+    font-size: 12px;
+    height: 30px;
+    flex-wrap: wrap;
+    margin: 5px;
+}
+
+.member {
+    font-size: 25px;
+}
+
+.action-block {
+    padding-top: 20px;
+}
+.question-link {
+    font-size: x-large;
+}
+.username {
+    text-decoration: underline black;
+    color: purple;
+    font-size: 20px;
+    padding-left: 5px;
+    text-shadow: blueviolet 1px 1px;
+
+}
+.asks {
+    color: rgb(0, 0, 0);
+    font-size: 20px;
+    padding-left: 5px;
+    text-shadow: rgb(0, 0, 0) 1px 1px;
+}
+.tag-link{
+    text-decoration: none;
+}
+.popular-tag > a:hover {
+    text-decoration: underline;
+}
+.tag > a:hover {
+    text-decoration: underline;
+}

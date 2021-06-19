@@ -1,0 +1,58 @@
+{% extends "include/base.html" %}
+{% load static %}
+
+
+{% block headline %}
+
+                    <div class="d-flex align-items-end ms-5 ps-5 mb-4 mt-2">
+                        <div class="caption">
+                            Settings
+                        </div>
+                    </div>
+
+{% endblock headline %}
+
+{% block content %}
+                    <form method="post" novalidate enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {% if form_updated %}
+            <div class="alert alert-success" role="alert">
+            Changes saved successfully!
+            </div>
+        {% endif %}
+
+        {% for form_field in form %}
+        <div class="d-flex ms-5 ps-5 mb-3 w-100">
+            <label class="col-sm-4 col-form-label col-form-label-lg">{{ form_field.label }}</label>
+            <div class="d-flex w-100 ms-3">
+                {{ form_field }}
+                <div class="d-flex w-100 ms-3 invalid-feedback">
+                    {{ form_field.errors }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% for avatar in profile_picture %}
+        <div class="d-flex ms-5 ps-5 mb-3 w-100">
+            <label class="col-sm-4 col-form-label col-form-label-lg">{{ avatar.label }}</label>
+            <div class="d-flex w-100 ms-3">
+                {{ avatar }}
+                <div class="d-flex w-100 ms-3 invalid-feedback">
+                    {{ avatar.errors }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="d-flex mb-3 ms-5 ps-5 w-50 justify-content-start">
+            <div class="col-sm-2"></div>
+            <div class="d-flex">
+                <button type="submit" class="btn btn-success btn-lg">Save</button>
+            </div>
+
+        </div>
+    </form>
+{% endblock content %}
+                

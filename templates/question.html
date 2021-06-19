@@ -1,0 +1,19 @@
+
+{% extends "include/base.html" %}
+{% load static %}
+
+{% block content %}
+    {% include "include/question_main.html" %}
+    {% for answer in answers %}
+        {% include "include/answer.html" %}
+    {% endfor %}
+    {% include "include/paginator_question.html" %}
+    {% include "include/answer_form.html" %}
+    
+{% endblock content %}
+
+
+{% block jscode %}
+    <script src="{% static '/js/votes.js' %}"></script>
+    <script src="{% static '/js/is_correct.js' %}"></script>
+{% endblock jscode %}

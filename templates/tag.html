@@ -1,0 +1,24 @@
+{% extends 'include/base.html' %}
+
+{% load static %}
+{% block headline %}
+                    <div class="caption col-form-label w-25">
+                        tag
+                    </div>
+                    <div class="ms-3 hot-questions">
+                        <h1> {{ name }} </h1>
+                    </div>
+
+{% endblock headline %}
+
+{% block content %}
+
+    {% for question in questions %}
+
+        {% include "include/question.html" %}
+
+    {% endfor %}
+    
+    {% include "include/paginator.html" %}
+                    
+{% endblock content %}

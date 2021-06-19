@@ -1,0 +1,30 @@
+{% extends "include/base.html" %}
+{% load static %}
+
+{% block headline %}
+                    <div class="caption pb-3"> New Question </div>
+{% endblock headline %}
+
+{% block content %}
+                    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+
+        {% for form_field in form %}
+        <div class="d-flex ms-5 mb-3">
+            <label for="inputTitle" class="col-sm-2 col-form-label col-form-label-lg">{{ form_field.label }}</label>
+            <div class="d-flex w-100">
+                {{ form_field }}
+                <div class="d-flex w-100 ms-3 invalid-feedback">
+                    {{ form_field.errors }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="d-flex mb-3 w-100 justify-content-end">
+            <div class="d-flex">
+                <button type="submit" class="btn btn-success btn-lg">ASK!</button>
+            </div>
+
+        </div>
+      </form>
+{% endblock content %}

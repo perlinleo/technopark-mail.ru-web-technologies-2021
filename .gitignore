@@ -1,0 +1,11 @@
+#Venv dir
+venv/
+
+#pyc
+*.pyc
+
+#SQLite database 
+db.sqlite3
+
+#pycache
+askme/__pycache__

@@ -1,0 +1,31 @@
+{% extends "include/base.html" %}
+{% load static %}
+
+{% block headline %}
+
+<div class="d-flex align-items-end ms-5 mb-4 mt-2">
+
+    <div >
+        <a href="{% url 'index' %}" class="w-25 caption" > New Questions
+        
+         </a>
+    </div>
+    <div class="w-50 px-5" style="font-weight: 100;">
+        <a href="{% url 'hot_questions' %}" class="hot-questions-inactive"> Hot Questions</a>
+    </div>
+</div>
+
+
+{% endblock headline %}
+
+{% block content %}
+    {% for question in questions %}
+        {% include "include/question.html" %}
+    {% endfor %}
+    {% include "include/paginator.html" %}
+
+{% endblock content %}
+
+{% block jscode %}
+    <script src="{% static '/js/votes.js' %}"></script>
+{% endblock jscode %}
